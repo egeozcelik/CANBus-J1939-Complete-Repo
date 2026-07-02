@@ -1,0 +1,55 @@
+/*
+ * J1939 monitor - theme sheet.
+ *
+ * Dark industrial dashboard theme. Class names match the widgets in
+ * ui/monitor.glade: .evlbl/.evres for EV signals, .lbl/.res for
+ * standard J1939-71 signals.
+ */
+
+window {
+    background: #14171d;
+}
+
+.evlbl {
+    color: #bed754;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.evres {
+    color: #bed754;
+    font-size: 15px;
+    font-weight: 900;
+}
+
+.lbl {
+    color: #71e6e0;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.res {
+    color: #71e6e0;
+    font-size: 15px;
+    font-weight: 900;
+}
+
+.pano {
+    color: #d39e00;
+    font-size: 17px;
+    font-weight: 700;
+}
+
+.exitbtn {
+    background: #8b1a12;
+    color: #fafafa;
+    font-size: 20px;
+    border: none;
+}
+
+.startbtn {
+    background: #b8860b;
+    color: #fafafa;
+    font-size: 20px;
+    border: none;
+}

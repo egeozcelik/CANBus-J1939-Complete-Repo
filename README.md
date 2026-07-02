@@ -318,21 +318,12 @@ See the monitor's own README for prerequisites, installation, usage and extensio
 
 ## 9. Quick Start: Pairing the Two Applications
 
-The fastest way to see the full pipeline in action — with no CAN hardware at all — is to run both applications against the same virtual bus:
+The fastest way to see the full pipeline in action — with no CAN hardware at all — is a virtual SocketCAN device on Linux, shared system-wide between the two processes:
 
 ```bash
 cd simulator && pip install -r requirements.txt && cd ..
 cd monitor && pip install -r requirements.txt && cd ..
 
-python simulator/main.py --headless --interface virtual --channel demo &
-python monitor/main.py --headless --interface virtual --channel demo
-```
-
-The simulator starts broadcasting J1939 frames from its vehicle model, and the monitor decodes them into physical values in real time.
-
-On Linux with SocketCAN, the same pairing works over a virtual CAN device shared system-wide:
-
-```bash
 sudo modprobe vcan
 sudo ip link add dev vcan0 type vcan
 sudo ip link set up vcan0
@@ -340,6 +331,17 @@ sudo ip link set up vcan0
 python simulator/main.py --headless --interface socketcan --channel vcan0 &
 python monitor/main.py --headless --interface socketcan --channel vcan0
 ```
+
+The simulator starts broadcasting J1939 frames from its vehicle model, and the monitor decodes them into physical values in real time.
+
+Without kernel modules (e.g. inside a container), python-can's `udp_multicast` interface links the two processes over the loopback network instead (Linux/macOS, requires `pip install msgpack`):
+
+```bash
+python simulator/main.py --headless --interface udp_multicast --channel 239.74.163.2 &
+python monitor/main.py --headless --interface udp_multicast --channel 239.74.163.2
+```
+
+Note that python-can's `virtual` interface is process-local: it is ideal for unit tests and single-process soak runs, but it cannot bridge two separate processes.
 
 ---
 

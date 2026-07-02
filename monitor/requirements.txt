@@ -1,0 +1,2 @@
+PyGObject>=3.42
+python-can>=4.0
