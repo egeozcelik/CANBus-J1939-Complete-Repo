@@ -20,7 +20,7 @@ from typing import Callable, Mapping
 import gi
 
 gi.require_version("Gtk", "3.0")
-from gi.repository import Gdk, Gtk, GLib  # noqa: E402
+from gi.repository import Gdk, Gtk, GLib
 
 from .database import PGN_DATABASE, SIGNAL_DATABASE
 from .engine import BroadcastEvent, SimulationEngine
