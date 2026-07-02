@@ -1,0 +1,30 @@
+# J1939 simulator configuration
+# -------------------------------------------------------
+# CAN bus, simulation and logging settings. CLI arguments
+# override the values in this file.
+
+bus:
+  # Supported interfaces:
+  #   - "ixxat"      : Ixxat USB-to-CAN II / Ixxat CAN-IB series
+  #   - "vector"     : Vector CANcase XL / VN series
+  #   - "kvaser"     : Kvaser USBcan
+  #   - "pcan"       : Peak-System PCAN-USB
+  #   - "socketcan"  : Linux SocketCAN (vcan0, can0, ...)
+  #   - "virtual"    : python-can built-in loop-back (for tests)
+  interface: "virtual"
+  channel: 0
+  bitrate: 250000
+  send_timeout: 0.1
+  max_retries: 3
+  # Extra parameters passed through to python-can:
+  # receive_own_messages: true
+
+simulation:
+  tick_interval_ms: 50
+  # Override the source address of every PGN with a single SA:
+  # source_address: 0x01
+  ev_mode: true
+
+logging:
+  level: "INFO"
+  # file: "logs/j1939sim.log"

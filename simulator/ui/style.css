@@ -1,0 +1,113 @@
+/*
+ * J1939 simulator - theme sheet.
+ *
+ * Dark, balanced-contrast, industrial feel with a monospaced log panel.
+ * Class names are semantic so colors can be managed in one place.
+ */
+
+window {
+    background: #1a1d24;
+}
+
+label {
+    color: #e6e6e6;
+    font-family: "Inter", "Segoe UI", "Liberation Sans", sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+}
+
+.label {
+    color: #e6e6e6;
+    font-size: 17px;
+    font-weight: 600;
+    font-family: "JetBrains Mono", "Cascadia Mono", "Consolas", monospace;
+}
+
+.evlabel {
+    color: #20c997;
+    font-size: 17px;
+    font-weight: 700;
+    font-family: "JetBrains Mono", "Cascadia Mono", "Consolas", monospace;
+}
+
+.stlabel {
+    color: #ffd166;
+    font-size: 17px;
+    font-weight: 600;
+    font-family: "JetBrains Mono", "Cascadia Mono", "Consolas", monospace;
+}
+
+button {
+    border-radius: 6px;
+    padding: 6px 12px;
+}
+
+.btn {
+    background-image: none;
+    background-color: #2c313c;
+    color: #e6e6e6;
+    border: 1px solid #3b414e;
+    margin: 4px;
+    font-weight: 500;
+    box-shadow: none;
+}
+
+.btn:hover {
+    background-color: #353c4a;
+}
+
+.start-btn {
+    background-image: none;
+    background-color: #d39e00;
+    color: #1a1d24;
+    font-size: 22px;
+    font-weight: 700;
+    border: 1px solid #1a1d24;
+    margin: 4px;
+}
+
+.start-btn:hover {
+    background-color: #f1b100;
+}
+
+.exit-btn {
+    background-image: none;
+    background-color: #b03a2e;
+    color: #fafafa;
+    font-size: 22px;
+    font-weight: 700;
+    border: 1px solid #1a1d24;
+    margin: 4px;
+}
+
+.exit-btn:hover {
+    background-color: #c0392b;
+}
+
+.button-selected {
+    background-image: none;
+    background-color: #d39e00;
+    color: #1a1d24;
+    font-weight: 600;
+}
+
+.button-unselected {
+    background-image: none;
+    background-color: #2c313c;
+    color: #d6d6d6;
+}
+
+textview, textview text {
+    background-color: #0f1217;
+    color: #c8d4e3;
+    font-family: "JetBrains Mono", "Cascadia Mono", "Consolas", monospace;
+    font-size: 13px;
+}
+
+switch {
+    margin: 4px;
+}
+
+switch slider {
+    background-color: #d39e00;
+}
