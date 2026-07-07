@@ -35,6 +35,11 @@ Individually the two apps are useful; together they form a complete **hardware-i
 
 **2. IXXAT USB-to-CAN II.** An intelligent USB↔CAN adapter that turns the PC's USB port into a real CAN controller. The generator selects it through `python-can`'s `ixxat` backend and transmits at 250 kbit/s onto the bus. Any other `python-can`-supported adapter (Vector, Kvaser, Peak) drops in unchanged.
 
+<p align="center">
+  <img src="docs/images/ixxat-usb-can.jpg" alt="IXXAT USB-to-CAN II adapter bridging the PC to the CAN bus" width="360"/>
+</p>
+<p align="center"><i>The IXXAT USB-to-CAN II adapter — the PC's USB port on one side, the vehicle's CAN bus on the other.</i></p>
+
 **3. Physical CAN bus & wiring.** The adapter drives the differential **CAN_H / CAN_L** pair of a 120 Ω-terminated bus. A DB9 breakout and wiring harness route the bus and 12 VDC power out to the vehicle-side connectors (here MCFIT10 / MCFIT6), exactly as on a real loom:
 
 <p align="center">
