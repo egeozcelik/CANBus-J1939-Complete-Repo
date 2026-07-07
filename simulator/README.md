@@ -2,6 +2,33 @@
 
 A PC-side **SAE J1939 CAN traffic generator** with a GTK 3 control panel and a fully scriptable headless mode. It emulates the frames a heavy-duty (or electric) vehicle broadcasts on its CAN bus, so receiver devices — on-board units, telematics gateways, dashboards, data loggers — can be validated on the bench instead of in the field.
 
+## Windows: one-click executable
+
+GTK 3 is Linux-first and awkward to install on Windows, so the project ships a **self-contained Windows desktop build** (Tkinter) that reuses the *same* backend — protocol, signal database, vehicle-dynamics model and broadcast engine — packaged into a **single double-click `.exe` with no Python, GTK or CAN driver to install**:
+
+```powershell
+cd simulator
+build_windows.bat            # produces dist\J1939-Simulator.exe
+dist\J1939-Simulator.exe     # double-click it, then press START SIMULATION
+```
+
+It defaults to the hardware-free `virtual` CAN bus, so it runs on any PC. Hold **THROTTLE** / **BRAKE** (or tick **Auto-drive**) to move the vehicle model; switch the log between raw **Frames** and decoded **Values**; flip **Plug** / **AC Charging** to exercise the EV signals. To transmit on a real bench, pick **ixxat** (or vector / kvaser / pcan / socketcan) from the Interface selector — see the [end-to-end bench](../README.md#system-architecture--the-end-to-end-bench).
+
+<p align="center">
+  <img src="../docs/images/can-generator.gif" alt="J1939 Simulator generating CAN traffic live" width="860"/>
+</p>
+<p align="center"><i>The desktop app generating live J1939 traffic over the virtual bus, in the decoded "Values" view.</i></p>
+
+<p align="center">
+  <img src="../docs/images/simulator-app.png" alt="J1939 Simulator broadcasting raw CAN frames over the virtual bus" width="860"/>
+</p>
+<p align="center"><i>Live broadcast over the virtual bus — 20 PGNs streaming as raw 29-bit J1939 frames, driven by the vehicle-dynamics model.</i></p>
+
+<p align="center">
+  <img src="../docs/images/simulator-app-values.png" alt="J1939 Simulator decoded value view with EV pack charging" width="860"/>
+</p>
+<p align="center"><i>The same traffic in decoded <b>Values</b> view, with the EV pack charging (plug connected, AC charging on — note the negative pack current).</i></p>
+
 ## Features
 
 - **20 PGNs / 30 signals** out of the box: standard J1939-71 parameters (EEC1, EEC2, CCVS, LFE, ET1, EFL/P1, VEP1, HOURS, DD, VD, IC1) plus EV battery/charging PGNs (HVESDS1, HVESSS1, EVSE, SOH, TEC, VEP15) and proprietary EV motor/battery groups.
@@ -58,12 +85,20 @@ python3 -m venv venv && source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### Windows / headless-only
+### Windows
 
-The GUI requires GTK, which is nontrivial on Windows (MSYS2). The headless mode needs only `python-can` and `PyYAML`:
+The [one-click executable](#windows-one-click-executable) above needs nothing installed. To run the desktop app from source, or to rebuild the `.exe`:
 
 ```powershell
-pip install python-can PyYAML
+pip install python-can pyinstaller     # PyYAML optional, only for config files
+python desktop_app.py                  # run the Tkinter desktop app from source
+build_windows.bat                      # or repackage dist\J1939-Simulator.exe
+```
+
+The GTK control panel (`python main.py`) is Linux-first; on Windows use the Tkinter desktop app above. Headless mode needs only `python-can`:
+
+```powershell
+python main.py --headless --interface virtual --channel demo
 ```
 
 ## Running
