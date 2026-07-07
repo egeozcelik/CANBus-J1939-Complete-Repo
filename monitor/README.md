@@ -2,6 +2,13 @@
 
 A standalone **SAE J1939 receiver and live dashboard** for Linux, designed for embedded targets (on-board computers, in-vehicle tablets, industrial panels) that consume J1939 traffic over **SocketCAN**. It listens on a CAN interface with an event-driven `python-can` notifier, extracts PGNs from 29-bit extended identifiers with spec-correct PDU1/PDU2 logic, decodes payloads through a declarative signal table and renders the physical values on a GTK 3 dashboard — or on the console in headless mode.
 
+Paired with the [simulator](../simulator/) across an **IXXAT USB-to-CAN** bridge, it forms the receiver end of a full hardware-in-the-loop bench (see the [system architecture](../README.md#system-architecture--the-end-to-end-bench)): the PC generates a vehicle's J1939 traffic and this app decodes it live on an in-vehicle tablet.
+
+<p align="center">
+  <img src="../docs/images/monitor-tablet.jpg" alt="J1939 monitor decoding live CAN data on an in-vehicle tablet" width="760"/>
+</p>
+<p align="center"><i>The monitor on an in-vehicle tablet, decoding the generator's J1939 frames into physical values in real time.</i></p>
+
 ## Features
 
 - **17 supported PGNs**: standard J1939-71 engine/vehicle parameters plus EV battery and charging groups (full table below).

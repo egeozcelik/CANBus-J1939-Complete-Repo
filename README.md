@@ -17,6 +17,37 @@ Each application is fully standalone and ships with its own README covering arch
 
 ---
 
+## System Architecture — the End-to-End Bench
+
+Individually the two apps are useful; together they form a complete **hardware-in-the-loop (HIL) test bench** that recreates a heavy-duty vehicle's CAN network on a desk. The PC plays the **vehicle** — it generates the J1939 traffic — and the tablet plays the **device under test**, the in-vehicle receiver that has to decode it. Between them sits the exact hardware path a real installation uses:
+
+```
+  ┌──────────────┐   USB    ┌──────────────────────┐   CAN bus @ 250 kbit/s    ┌────────────────┐
+  │ PC GENERATOR │─────────▶│ IXXAT USB-to-CAN II   │──────────────────────────▶│ TABLET MONITOR │
+  │  simulator/  │          │  USB  <=>  CAN bridge │   29-bit extended J1939   │   monitor/     │
+  └──────────────┘          └──────────────────────┘                           └────────────────┘
+   emulates the vehicle       bridges the PC to the                              receives each frame,
+   from a dynamics model      physical differential bus                          extracts the PGN, decodes
+   (see §7)                   (12 VDC powered)                                    the SPNs, shows values (§8)
+```
+
+**1. PC generator — [`simulator/`](simulator/).** A Windows/Linux application that steps a vehicle-dynamics model and packs the resulting signals into protocol-accurate 29-bit J1939 frames — 20 PGNs / 30 signals spanning standard J1939-71 parameters and EV battery/charging groups. On Windows it runs as a single-click executable; see [§7](#7-practical-application-1-the-j1939-simulator).
+
+**2. IXXAT USB-to-CAN II.** An intelligent USB↔CAN adapter that turns the PC's USB port into a real CAN controller. The generator selects it through `python-can`'s `ixxat` backend and transmits at 250 kbit/s onto the bus. Any other `python-can`-supported adapter (Vector, Kvaser, Peak) drops in unchanged.
+
+**3. Physical CAN bus & wiring.** The adapter drives the differential **CAN_H / CAN_L** pair of a 120 Ω-terminated bus. A DB9 breakout and wiring harness route the bus and 12 VDC power out to the vehicle-side connectors (here MCFIT10 / MCFIT6), exactly as on a real loom:
+
+<p align="center">
+  <img src="docs/images/system-wiring.png" alt="CAN bus wiring harness: DB9 to vehicle connectors with 12 VDC power" width="720"/>
+</p>
+<p align="center"><i>The bench harness: CAN_H / CAN_L and 12 VDC power broken out from the DB9 bus to the MCFIT vehicle connectors.</i></p>
+
+**4. Tablet monitor — [`monitor/`](monitor/).** An embedded-Linux / tablet application that listens on the bus (SocketCAN), extracts the PGN from every 29-bit identifier, decodes the SPNs into physical values and renders them on a live dashboard — the real receiver under validation. See [§8](#8-practical-application-2-the-j1939-monitor).
+
+> **No hardware on hand? Same pipeline.** Replace the IXXAT link with a virtual or SocketCAN bus and the two apps talk to each other directly — see the [Quick Start in §9](#9-quick-start-pairing-the-two-applications).
+
+---
+
 ## Table of Contents
 
 1. [What is J1939?](#1-what-is-j1939)
@@ -284,6 +315,23 @@ To put the theory above into practice, this repository includes a **PC-side J193
 
 The simulator can transmit at 250 kbit/s or 500 kbit/s through a USB-to-CAN adapter (e.g. Ixxat USB-to-CAN II) or any other hardware supported by `python-can`. Since it also works with a virtual CAN interface when no hardware is present, it is equally suitable for CI/CD pipelines.
 
+On Windows it also ships as a **single-click executable** — no Python, GTK or CAN drivers required. It defaults to a hardware-free virtual CAN bus, so you can double-click it, press **START SIMULATION**, and immediately watch the vehicle's J1939 traffic being generated:
+
+<p align="center">
+  <img src="docs/images/can-generator.gif" alt="J1939 Simulator generating CAN traffic in real time" width="820"/>
+</p>
+<p align="center"><i>The generator running live — the vehicle-dynamics model drives 20 PGNs on their own broadcast periods, shown here in decoded "Values" mode.</i></p>
+
+<p align="center">
+  <img src="docs/images/simulator-app.png" alt="J1939 Simulator broadcasting raw CAN frames" width="820"/>
+</p>
+<p align="center"><i>The simulator broadcasting 20 PGNs as raw 29-bit J1939 frames over the virtual bus, driven by a live vehicle-dynamics model.</i></p>
+
+<p align="center">
+  <img src="docs/images/simulator-app-values.png" alt="J1939 Simulator decoded value view with EV charging" width="820"/>
+</p>
+<p align="center"><i>The same traffic decoded into physical values, with the EV battery pack charging (plug connected, AC charging on).</i></p>
+
 ### 7.1. Architecture at a Glance
 
 The application consists of five main layers:
@@ -307,6 +355,11 @@ See the simulator's own README for installation, configuration, usage, testing a
 The second application is the consumer side of the protocol: a **Linux J1939 monitor** designed for embedded Linux devices (on-board computers, in-vehicle tablets, industrial gateways) that receive J1939 traffic over SocketCAN.
 
 It listens on a CAN interface with an event-driven `python-can` notifier, extracts the PGN from each 29-bit extended identifier using proper PDU1/PDU2 logic, decodes the payload through a declarative signal table (17 PGNs covering standard J1939-71 parameters and EV battery/charging signals) and renders the physical values on a GTK 3 dashboard — or on the console in headless mode.
+
+<p align="center">
+  <img src="docs/images/monitor-tablet.jpg" alt="J1939 monitor running on an in-vehicle tablet, decoding live CAN data" width="760"/>
+</p>
+<p align="center"><i>The monitor deployed on an in-vehicle tablet — the device-under-test decoding the generator's J1939 traffic into live physical values.</i></p>
 
 ### 8.1. Documentation
 
